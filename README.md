@@ -14,6 +14,14 @@ This repository presents a case study focused on designing an analytics-ready SQ
 **Docs**
 -  Architecture → [`docs/architecture.md`](docs/architecture.md)
 
+## Notebook (Analytical Consumption Demo)
+
+This repository includes a minimal notebook that demonstrates how the semantic layer can be consumed from Python (SQLAlchemy + pandas) to build analysis-ready datasets with minimal wrangling.
+
+**Confidentiality note:**  
+The original database and production data used in the real project are not publicly accessible due to confidentiality constraints.  
+The notebook is written against the same semantic view interfaces and demonstrates the real query patterns (joins, pivots, segmentation) used in practice.
+
 ---
 
 ## Context & Problem
@@ -218,3 +226,13 @@ flowchart LR
   C --> D[(PostgreSQL)]
   D --> E[Semantic layer<br/>Views for analysis]
   E --> F[Python notebooks<br/>EDA and reporting]
+
+
+---
+
+## Status
+
+**Status:** Complete (v1)
+
+This case study focuses on the design and implementation of an analytics-ready SQL data model and its analytical consumption.
+Deeper analytical work (SPC, statistical analysis, customer-level insights) is intentionally covered in separate case studies.
