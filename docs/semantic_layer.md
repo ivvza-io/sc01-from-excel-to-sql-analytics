@@ -14,9 +14,20 @@ These views provide analytics-ready datasets with consistent definitions and a c
 
 ---
 
-## View Catalog
+## Scope and Purpose
+
+These five views are the **analytical interfaces** designed by SC01 to 
+replace spreadsheet-based consumption patterns.
+
+Each view has an explicit grain contract to prevent confusion about 
+what "one row" represents.
+
+For context on why this semantic layer was designed, see the SC01 README: 
+[From Fragmented Data to Trustworthy Analytics](README.md).
 
 ---
+
+## View Catalog
 
 ### 1) Heats by Alloy
 

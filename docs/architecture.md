@@ -41,6 +41,8 @@ flowchart TB
 
 ## Architectural Role in Analytical Decision-Making
 
+The core motivation: **replace fragmented data with defensible analytical foundations**.
+
 This architecture is intentionally designed to support decision-oriented analytics, not ad-hoc reporting.
 
 By enforcing:
@@ -53,7 +55,7 @@ the pipeline ensures that:
 - uncertainty estimates remain comparable over time,
 - downstream analytical conclusions can be traced back to source data.
 
-This stability is a prerequisite for the modeling, screening, and uncertainty-aware design tools documented in subsequent study cases.
+This stability is a prerequisite for the modeling, screening, and uncertainty-aware design tools documented in subsequent study cases. Without it, models lack credibility.
 
 ---
 
