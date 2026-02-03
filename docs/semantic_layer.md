@@ -16,8 +16,7 @@ These views provide analytics-ready datasets with consistent definitions and a c
 
 ## Scope and Purpose
 
-These five views are the **analytical interfaces** designed by SC01 to 
-replace spreadsheet-based consumption patterns.
+These views are the **analytical interfaces** designed by SC01 to replace spreadsheet-based consumption patterns.
 
 Each view has an explicit grain contract to prevent confusion about 
 what "one row" represents.
@@ -60,81 +59,6 @@ select
 from v_heats_by_alloy
 group by alloy_code
 order by heats_count desc;
-```
-
----
-
-### 2) Chemistry Results by Heat
-
-**Purpose**  
-Expose chemistry results at the heat level by joining chemistry sessions and measured element values into a single analytics-ready view, while preserving the analytical meaning of each session type.
-
-**Grain**  
-- 1 row per (`heat_num`, `chem_session_id`, `element_symbol`)  
-  Each heat can have multiple chemistry sessions, and each session contains multiple element measurements.
-
-**Primary key / join keys**  
-- `heat_num`  
-- `chem_session_id`  
-- `element_symbol`
-
-**Core columns (typical)**  
-- `heat_num`  
-- `chem_session_id`  
-- `session_type`  
-  - `preanalysis` — analysis performed prior to casting, used for alloy adjustments (may occur multiple times per heat, e.g. pre 1, pre 2)  
-  - `drop_analysis` — analysis associated with the casting drop, representing final heat chemistry  
-- `session_seq` (optional)  
-- `element_symbol` (e.g., Si, Fe, Cu, Mn, Mg)  
-- `element_value` (numeric)
-
-**Inputs (sources)**  
-- chemistry sessions table  
-- chemistry element values table  
-- foreign key resolution to `heat_num`
-
-**Typical questions it answers**
-- What is the final (drop) chemistry for each heat?
-- How did chemistry evolve from preanalysis to drop analysis?
-- Which heats are out of specification based on drop analysis?
-- How does chemistry behave over time (SPC) for a given alloy?
-
-**Example queries**
-```sql
--- Final chemistry (drop analysis)
-select
-  heat_num,
-  element_symbol,
-  element_value
-from v_chem_by_heats
-where heat_num = 123456
-  and session_type = 'drop_analysis'
-order by element_symbol;
-
--- Chemistry evolution (preanalysis → drop)
-select
-  heat_num,
-  session_type,
-  session_seq,
-  element_symbol,
-  element_value
-from v_chem_by_heats
-where heat_num = 123456
-order by session_type, session_seq, element_symbol;
-
--- SPC-ready dataset (drop analysis only)
-select
-  vha.alloy_code,
-  vch.heat_num,
-  vch.element_symbol,
-  vch.element_value
-from v_chem_by_heats vch
-join v_heats_by_alloy vha
-  on vha.heat_num = vch.heat_num
-where vha.alloy_code = '7072'
-  and vch.element_symbol = 'Fe'
-  and vch.session_type = 'drop_analysis'
-order by vch.heat_num;
 ```
 
 ---
@@ -205,7 +129,7 @@ order by lab_test;
 
 ---
 
-### 4) Heats by Final Product
+### 3) Heats by Final Product
 
 **Purpose**  
 Provide final product characterization at the heat level: base temper, strain level, and product form (e.g., coil, sheet, disc).
@@ -247,50 +171,6 @@ order by heats_count desc;
 
 **Business segmentation**  
 This view is a key segmentation layer for reporting and SPC. When joined with customer mapping, it enables customer- and product-specific monitoring (e.g., O-temper discs for Customer X).
-
----
-
-### 5) Heats by Customer
-
-**Purpose**  
-Map each heat to its customer to enable customer-segmented reporting, SPC, and traceability analysis.
-
-**Grain**  
-- 1 row per heat
-
-**Primary key / join key**  
-- `heat_num`
-
-**Core columns (typical)**  
-- `heat_num`  
-- `customer`  
-- `market`  
-- `customer_segment`
-
-**Inputs (sources)**  
-- production orders  
-- customer assignment logic at heat level
-
-**Typical questions it answers**
-- How do properties behave for a specific customer and product segment?
-- How consistent is delivery to a given customer?
-- How does the same product differ across customers?
-
-**Example query**
-```sql
--- Segment lab results by customer
-select
-  hc.customer,
-  vlv.lab_test,
-  avg(vlv.test_value) as avg_test_value,
-  count(*) as n
-from v_lab_values_by_heats vlv
-join v_heats_by_customer hc
-  on hc.heat_num = vlv.heat_num
-where vlv.test_type = 'tensile'
-group by hc.customer, vlv.lab_test
-order by hc.customer, vlv.lab_test;
-```
 
 ---
 
