@@ -1,0 +1,37 @@
+services:
+  sc01-db:
+    image: postgres:14-alpine
+    container_name: sc01-db
+    environment:
+      POSTGRES_USER: sc01_user
+      POSTGRES_PASSWORD: sc01_password
+      POSTGRES_DB: sc01
+    ports:
+      - "5433:5432"
+    volumes:
+      # Mount schema init scripts in order
+      - ./sql/00_create_schemas.sql:/docker-entrypoint-initdb.d/00-create_schemas.sql:ro
+      - ./sql/01_tables.sql:/docker-entrypoint-initdb.d/01-tables.sql:ro
+      # Mount seed data scripts
+      - ./sql/02_load.sql:/docker-entrypoint-initdb.d/03-load.sql:ro
+      - ./sql/03_semantic_views.sql:/docker-entrypoint-initdb.d/02-semantic_views.sql:ro
+      # Mount seed CSV data directory
+      - ./sql/seed:/seed:ro
+      # Persist data across container restarts
+      - sc01-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sc01_user -d sc01"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sc01-network
+    restart: unless-stopped
+
+volumes:
+  sc01-db-data:
+    driver: local
+
+networks:
+  sc01-network:
+    driver: bridge

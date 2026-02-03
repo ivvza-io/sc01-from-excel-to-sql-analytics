@@ -1,0 +1,4 @@
+code,description,unit
+UTS_MPa,ultimate tensile ,mpa
+YS_MPa,yield point 0.02,mpa
+EL_percent,total elongation,pct

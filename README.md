@@ -133,10 +133,8 @@ The semantic layer is the **product surface** of the analytics model.
 | View | Grain | Purpose |
 |-----|------|---------|
 | `v_heats_by_alloy` | 1 per heat | Alloy segmentation |
-| `v_chem_by_heats` | 1 per (heat, session, element) | Chemistry composition |
 | `v_lab_values_by_heats` | 1 per (heat, test, session) | Mechanical results |
 | `v_heats_by_final_product` | 1 per heat | Product metadata |
-| `v_heats_by_customer` | 1 per heat | Market assignment |
 
 **Key principle:** each view has an explicit, documented **grain contract**.
 
